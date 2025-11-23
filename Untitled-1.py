@@ -86,6 +86,7 @@ include_institutional = st.checkbox("包含三大法人買賣超資訊", value=F
 if include_institutional:
     st.warning("⚠️ 注意：下載三大法人資料需要較長時間，建議選擇較短的日期範圍")
     st.info("💡 提示：三大法人資料包含17個詳細欄位，提供完整的買賣超分析資訊")
+    st.error("📅 重要限制：證交所三大法人買賣超 API 僅提供 2015 年之後的資料，如需下載 2015 年之前的資料，請取消勾選此選項")
 
 # 設定預設日期範圍（最近30天到昨天）
 from datetime import date
@@ -104,6 +105,16 @@ elif end_date > today:
 
 # 檢查日期範圍限制
 date_range = (end_date - start_date).days
+
+# 檢查三大法人資料的日期限制（2015年之前）
+institutional_date_warning = False
+if include_institutional:
+    min_institutional_date = date(2015, 1, 1)
+    if start_date < min_institutional_date:
+        st.error(f"❌ 三大法人資料僅支援 2015/01/01 之後的日期！您選擇的開始日期為 {start_date}，這將導致無法取得三大法人資料。")
+        st.info("💡 解決方案：請將開始日期調整為 2015/01/01 之後，或取消勾選「包含三大法人買賣超資訊」選項以下載純股價資料")
+        institutional_date_warning = True
+
 if include_institutional and date_range > 60:
     st.error("⚠️ 選擇三大法人資料時，日期範圍不能超過2個月（60天）")
     st.info("建議縮短日期範圍以確保下載效率")
@@ -114,8 +125,8 @@ elif include_institutional and date_range > 30:
 suffix = ".TW" if market == "上市 (TW)" else ".TWO"
 ticker = f"{code}{suffix}"
 
-# 禁用下載按鈕如果日期範圍超過限制
-download_disabled = include_institutional and date_range > 60
+# 禁用下載按鈕如果日期範圍超過限制或日期早於2015年
+download_disabled = (include_institutional and date_range > 60) or institutional_date_warning
 
 if st.button("下載資料", disabled=download_disabled):
     st.write(f"正在下載 {ticker} 的資料...")

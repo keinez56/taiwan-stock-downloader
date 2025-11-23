@@ -19,6 +19,10 @@ def get_institutional_trading(stock_code, start_date, end_date):
 
     Returns:
     pandas.DataFrame: 包含三大法人買賣超資訊的DataFrame
+
+    Note:
+    證交所三大法人買賣超 API 僅提供 2015 年之後的資料。
+    如果查詢 2015/01/01 之前的日期，將無法取得三大法人資料。
     """
 
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/111.25 (KHTML, like Gecko) Chrome/99.0.2345.81 Safari/123.36'}
