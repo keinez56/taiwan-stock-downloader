@@ -94,8 +94,11 @@ today = date.today()
 default_end = today - timedelta(days=1)  # 昨天
 default_start = default_end - timedelta(days=30)  # 30天前
 
-start_date = st.date_input("開始日期", value=default_start)
-end_date = st.date_input("結束日期", value=default_end)
+# 設定最早可選日期為 2007-01-01（股價資料可以追溯到此日期）
+min_date = date(2007, 1, 1)
+
+start_date = st.date_input("開始日期", value=default_start, min_value=min_date)
+end_date = st.date_input("結束日期", value=default_end, min_value=min_date)
 
 # 日期驗證
 if start_date > end_date:
